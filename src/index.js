@@ -1,12 +1,49 @@
 const express = require('express');
-const {uuid} = require('uuidv4');
+const {uuid, isUuid} = require('uuidv4');
 
 //Aplicação criada
 const app = express();
 
+app.use(express.json());
+
 const projects = [];
 
-app.use(express.json());
+/*Usamos um MIDDLEWARE quando queremos disparar automaticamente uma função em uma ou mais rotas
+Ex: O middle abaixo, logRequest*/
+function logRequest(req, res, next) {
+  const {method, url} = req;
+  
+  const logLabel = `[${method.toUpperCase()}] ${url}`;
+
+  console.time(logLabel);
+
+  /*Se eu não chamar o NEXT o próximo MIDDLEWARE não vai ser executado.
+  Lembrando que o próximo é dado de forma linear ao código*/
+  
+  //return next(); //Execute the Next Middleware
+
+  //Eu tiro o return e chamo apenas o next() para depois colocar mais código
+  next();
+
+  console.timeEnd(logLabel);
+}
+
+function validateProjectID(req, res, next) {
+  const {id} = req.params;
+  if(!isUuid(id)) {
+    return res.status(400).json({error: 'ID Is Not Valid!'});
+  }
+  return next();
+}
+
+app.use('/projects/:id', validateProjectID);
+
+//Após a definição do MIDDLEWARE, dar uma app.use no middleware
+app.use(logRequest);
+
+//Se for usar o MIDDLEWARE aqui, basta colocar quantos mids quiser antes da função da rota
+//Ex:
+//app.get('/exemplo', logRequest, verifyUsarData, hasBadname, (req, res) => {/*GET CODE HERE...*/})
 
 //Um GET para o recurso (resource) chamado "projects"
 app.get('/projects', (req, res) => {
@@ -35,6 +72,7 @@ app.post('/projects', (req, res) => {
 
 //:id quer dizer que quando for dado um PUT em "projects", ele deverá vir com o informação do id
 //no caso a URL ficaria: //localhost:3333/projects/2  => Para id == 2
+//app.put('/projects/:id', validateProjectID, (req, res) => {
 app.put('/projects/:id', (req, res) => {
 
   const {id} = req.params;
@@ -51,6 +89,7 @@ app.put('/projects/:id', (req, res) => {
   return res.json(proj);
 });
 
+//app.delete('/projects/:id', validateProjectID, (req, res) => {
 app.delete('/projects/:id', (req, res) => {
 
   const {id} = req.params;
