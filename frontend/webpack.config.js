@@ -19,6 +19,20 @@ module.exports = {
         use: {
           loader: 'babel-loader',
         }
+      },
+      {
+        test: /\.css$/,
+        exclude: /node_modules/,
+        use: [
+          { loader: 'style-loader' }, //Pega o CSS interpretado pelo CSS-LOADER e vai injetar as informações de estilização no HTML
+          { loader: 'css-loader' },  //Vai verificar os arquivos CSS e suas importações por exemplo imagens, então passa as informações necessárias para o Webpack
+        ]
+      },
+      {
+        test: /.*\.(gif|png|jpe?g)$/i, //Testar .gif, .png, .jpg ou .jpeg (o "i" depois do final da regex é pra informar que é pra ser case insensitive ou seja, pode ser JPG, JPg, jpg, ... )
+        use: [
+          {loader: "file-loader"},
+        ]
       }
     ]
 

@@ -1,5 +1,9 @@
 import React, {useState} from 'react';
 import Header from './components/Header';
+import myNameImage from './assets/cat.png';
+
+//O Webpack vai se encarregar da importação do CSS abaixo
+import './App.css';
 
 export default function App() {
 
@@ -12,6 +16,8 @@ export default function App() {
   return(
     <>
       <Header title="Hello Omni!"/>
+
+      <img width={260} src={myNameImage} />
 
       <ul>
         { projects.map((project => (<li key={project}> {project} </li>))) }
