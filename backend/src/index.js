@@ -1,8 +1,17 @@
 const express = require('express');
+const cors = require('cors');
 const {uuid, isUuid} = require('uuidv4');
 
 //Aplicação criada
 const app = express();
+
+app.use(cors()); //Assim está permitido que qualquere frontend acesso nossos recursos
+
+/* Fazendo o Cors filtrar o endereço do frontend que pode acessar
+app.use(cors({
+  origin: 'http://localhost:3000'
+}));
+*/
 
 app.use(express.json());
 
